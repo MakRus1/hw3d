@@ -1,5 +1,6 @@
 #include "Window.h"
 #include <sstream>
+#include "resource.h"
 
 Window::WindowClass Window::WindowClass::wndClass;
 
@@ -23,12 +24,12 @@ Window::WindowClass::WindowClass() noexcept
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hInstance = GetInstance();
-	wc.hIcon = nullptr;
+	wc.hIcon = static_cast<HICON>(LoadImage(GetInstance(), MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 32, 32, 0));
 	wc.hCursor = nullptr;
 	wc.hbrBackground = nullptr;
 	wc.lpszMenuName = nullptr;
 	wc.lpszClassName = GetName();
-	wc.hIconSm = nullptr;
+	wc.hIconSm = static_cast<HICON>(LoadImage(GetInstance(), MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 16, 16, 0));
 	RegisterClassEx(&wc);
 }
 
@@ -46,7 +47,7 @@ Window::Window(int width, int height, const LPCWSTR name)
 	wr.bottom = height + wr.top;
 	if (FAILED(AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE)))
 	{
-		throw CHWND_LAST_EXCEPT();
+		throw HWND_LAST_EXCEPT();
 	};
 
 	hWnd = CreateWindow(
@@ -58,7 +59,7 @@ Window::Window(int width, int height, const LPCWSTR name)
 
 	if (hWnd == nullptr)
 	{
-		throw CHWND_LAST_EXCEPT();
+		throw HWND_LAST_EXCEPT();
 	}
 
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
@@ -105,7 +106,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 }
 
 Window::Exception::Exception(int line, const char* file, HRESULT hr) noexcept
-	: ChiliException(line, file)
+	: MyException(line, file)
 	, hr(hr)
 {
 
@@ -126,7 +127,7 @@ const char* Window::Exception::what() const noexcept
 
 const char* Window::Exception::GetType() const noexcept
 {
-	return "Chili Window Exception";
+	return "My Window Exception";
 }
 
 std::wstring Window::Exception::TranslateErrorCode(HRESULT hr) noexcept

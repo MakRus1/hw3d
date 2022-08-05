@@ -11,7 +11,7 @@ int CALLBACK WinMain(
 {
 	try
 	{
-		Window wnd(800, 300, L"Donkey Fart Box");
+		Window wnd(800, 300, L"I Love You");
 
 		// message pump
 		MSG msg;
@@ -30,7 +30,7 @@ int CALLBACK WinMain(
 
 		return msg.wParam;
 	}
-	catch (const ChiliException& e)
+	catch (const MyException& e)
 	{
 		wchar_t wtext[256];
 		std::mbstowcs(wtext, e.what(), strlen(e.what()) + 1);

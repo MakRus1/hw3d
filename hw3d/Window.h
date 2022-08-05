@@ -1,12 +1,12 @@
 #pragma once
 
-#include "ChiliWIn.h"
-#include "ChiliException.h"
+#include "MyWin.h"
+#include "MyException.h"
 
 class Window
 {
 public:
-	class Exception : public ChiliException
+	class Exception : public MyException
 	{
 	public:
 		Exception(int line, const char* file, HRESULT hr) noexcept;
@@ -32,7 +32,7 @@ private:
 		~WindowClass();
 		WindowClass(const WindowClass&) = delete;
 		WindowClass& operator = (const WindowClass&) = delete;
-		static constexpr const LPCWSTR wndClassName = L"Chili Direct3D Engine Window";
+		static constexpr const LPCWSTR wndClassName = L"Direct3D Engine Window";
 		static WindowClass wndClass;
 		HINSTANCE hInst;
 	};
@@ -54,5 +54,5 @@ private:
 	HWND hWnd;
 };
 
-#define CHWND_EXCEPT(hr) Window::Exception(__LINE__, __FILE__, hr)
-#define CHWND_LAST_EXCEPT() Window::Exception(__LINE__, __FILE__, GetLastError())
+#define HWND_EXCEPT(hr) Window::Exception(__LINE__, __FILE__, hr)
+#define HWND_LAST_EXCEPT() Window::Exception(__LINE__, __FILE__, GetLastError())
