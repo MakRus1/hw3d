@@ -3,6 +3,7 @@
 #include "MyWin.h"
 #include "MyException.h"
 #include "Keyboard.h"
+#include "Mouse.h"
 
 class Window
 {
@@ -51,6 +52,7 @@ private:
 
 public:
 	Keyboard kbd;
+	Mouse mouse;
 
 private:
 	int width;

@@ -22,7 +22,6 @@ int CALLBACK WinMain(
 			DispatchMessage(&msg);
 		}
 
-
 		if (gResult == -1)
 		{
 			return -1;
