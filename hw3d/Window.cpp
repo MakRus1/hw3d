@@ -39,16 +39,18 @@ Window::WindowClass::~WindowClass()
 }
 
 Window::Window(int width, int height, const LPCWSTR name)
+	: width(width)
+	, height(height)
 {
 	RECT wr;
 	wr.left = 100;
 	wr.right = width + wr.left;
 	wr.top = 100;
 	wr.bottom = height + wr.top;
-	if (FAILED(AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE)))
+	if (AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE) == 0)
 	{
 		throw HWND_LAST_EXCEPT();
-	};
+	}
 
 	hWnd = CreateWindow(
 		WindowClass::GetName(), name,
@@ -68,6 +70,14 @@ Window::Window(int width, int height, const LPCWSTR name)
 Window::~Window()
 {
 	DestroyWindow(hWnd);
+}
+
+void Window::SetTitle(const LPCWSTR title)
+{
+	if (SetWindowText(hWnd, title) == 0)
+	{
+		throw HWND_LAST_EXCEPT();
+	}
 }
 
 LRESULT WINAPI Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
@@ -124,8 +134,9 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 
 	case WM_MOUSEMOVE:
 	{
-		POINTS pt = MAKEPOINTS(lParam);
+		const POINTS pt = MAKEPOINTS(lParam);
 		mouse.OnMouseMove(pt.x, pt.y);
+		break;
 	}
 	case WM_LBUTTONDOWN:
 	{

@@ -20,6 +20,17 @@ int CALLBACK WinMain(
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+
+			while (!wnd.mouse.IsEmpty())
+			{
+				const auto e = wnd.mouse.Read();
+				if (e.GetType() == Mouse::Event::Type::Move)
+				{
+					wchar_t title[256];
+					wsprintfW(title, L"Mouse position: (%d, %d)", e.GetPosX(), e.GetPosY());
+					wnd.SetTitle(title);
+				}
+			}
 		}
 
 		if (gResult == -1)

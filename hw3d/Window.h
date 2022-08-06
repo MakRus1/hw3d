@@ -44,6 +44,7 @@ public:
 	~Window();
 	Window(const Window&) = delete;
 	Window& operator = (const Window&) = delete;
+	void SetTitle(const LPCWSTR title);
 
 private:
 	static LRESULT CALLBACK HandleMsgSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
