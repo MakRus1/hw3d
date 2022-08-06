@@ -24,11 +24,18 @@ int CALLBACK WinMain(
 			while (!wnd.mouse.IsEmpty())
 			{
 				const auto e = wnd.mouse.Read();
-				if (e.GetType() == Mouse::Event::Type::Move)
+				switch (e.GetType())
 				{
-					wchar_t title[256];
-					wsprintfW(title, L"Mouse position: (%d, %d)", e.GetPosX(), e.GetPosY());
-					wnd.SetTitle(title);
+				case Mouse::Event::Type::Leave:
+					wnd.SetTitle(L"Gone!");
+					break;
+				case Mouse::Event::Type::Move:
+					{
+						wchar_t title[256];
+						wsprintfW(title, L"Mouse position: (%d, %d)", e.GetPosX(), e.GetPosY());
+						wnd.SetTitle(title);
+					}
+					break;
 				}
 			}
 		}
