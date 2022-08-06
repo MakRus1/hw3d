@@ -21,18 +21,26 @@ int CALLBACK WinMain(
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 
+			static int i = 0;
+
 			while (!wnd.mouse.IsEmpty())
 			{
 				const auto e = wnd.mouse.Read();
 				switch (e.GetType())
 				{
-				case Mouse::Event::Type::Leave:
-					wnd.SetTitle(L"Gone!");
-					break;
-				case Mouse::Event::Type::Move:
+				case Mouse::Event::Type::WheelUp:
+					i++;
 					{
 						wchar_t title[256];
-						wsprintfW(title, L"Mouse position: (%d, %d)", e.GetPosX(), e.GetPosY());
+						wsprintfW(title, L"Up: %d", i);
+						wnd.SetTitle(title);
+					}
+					break;
+				case Mouse::Event::Type::WheelDown:
+					i--;
+					{
+						wchar_t title[256];
+						wsprintfW(title, L"Down: %d", i);
 						wnd.SetTitle(title);
 					}
 					break;
