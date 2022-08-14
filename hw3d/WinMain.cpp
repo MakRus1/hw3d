@@ -1,6 +1,6 @@
 #pragma 
 
-#include "Window.h"
+#include "App.h"
 
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
@@ -11,56 +11,14 @@ int CALLBACK WinMain(
 {
 	try
 	{
-		Window wnd(800, 300, L"I Love You");
-
-		// message pump
-		MSG msg;
-		BOOL gResult;
-		while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-
-			static int i = 0;
-
-			while (!wnd.mouse.IsEmpty())
-			{
-				const auto e = wnd.mouse.Read();
-				switch (e.GetType())
-				{
-				case Mouse::Event::Type::WheelUp:
-					i++;
-					{
-						wchar_t title[256];
-						wsprintfW(title, L"Up: %d", i);
-						wnd.SetTitle(title);
-					}
-					break;
-				case Mouse::Event::Type::WheelDown:
-					i--;
-					{
-						wchar_t title[256];
-						wsprintfW(title, L"Down: %d", i);
-						wnd.SetTitle(title);
-					}
-					break;
-				}
-			}
-		}
-
-		if (gResult == -1)
-		{
-			return -1;
-		}
-
-		return msg.wParam;
+		return App{}.Go();
 	}
 	catch (const MyException& e)
 	{
 		wchar_t wtext[256];
 		std::mbstowcs(wtext, e.what(), strlen(e.what()) + 1);
 		LPWSTR temp_what = wtext;
-		std::mbstowcs(wtext, e.what(), strlen(e.what()) + 1);
+		std::mbstowcs(wtext, e.GetType(), strlen(e.GetType()) + 1);
 		LPWSTR temp_type = wtext;
 		MessageBox(nullptr, temp_what, temp_type, MB_OK | MB_ICONEXCLAMATION);
 	}
