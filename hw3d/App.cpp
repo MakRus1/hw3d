@@ -1,4 +1,6 @@
 #include "App.h"
+#include <sstream>
+#include <iomanip>
 
 App::App()
 	: wnd(800, 600, L"App")
@@ -7,25 +9,18 @@ App::App()
 
 int App::Go()
 {
-	MSG msg;
-	BOOL gResult;
-	while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
+	while (true)
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		if (const auto ecode = Window::ProcessMessages())
+		{
+			return *ecode;
+		}
 
 		DoFrame();
 	}
-
-	if (gResult == -1)
-	{
-		throw HWND_LAST_EXCEPT();
-	}
-
-	return msg.wParam;
 }
 
 void App::DoFrame()
 {
-
+	const float t = timer.Peek();
 }

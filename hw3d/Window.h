@@ -4,6 +4,7 @@
 #include "MyException.h"
 #include "Keyboard.h"
 #include "Mouse.h"
+#include <optional>
 
 class Window
 {
@@ -45,6 +46,7 @@ public:
 	Window(const Window&) = delete;
 	Window& operator = (const Window&) = delete;
 	void SetTitle(const LPCWSTR title);
+	static std::optional<int> ProcessMessages();
 
 private:
 	static LRESULT CALLBACK HandleMsgSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
