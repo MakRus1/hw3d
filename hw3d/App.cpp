@@ -22,5 +22,5 @@ int App::Go()
 
 void App::DoFrame()
 {
-	const float t = timer.Peek();
+	wnd.Gfx().EndFrame();
 }
