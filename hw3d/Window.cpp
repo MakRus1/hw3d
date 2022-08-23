@@ -82,7 +82,7 @@ void Window::SetTitle(const LPCWSTR title)
 	}
 }
 
-std::optional<int> Window::ProcessMessages()
+std::optional<int> Window::ProcessMessages() noexcept
 {
 	MSG msg;
 
@@ -102,6 +102,9 @@ std::optional<int> Window::ProcessMessages()
 
 Graphics& Window::Gfx()
 {
+	if (!pGfx) {
+		throw HWND_NOGFX_EXCEPT();
+	}
 	return *pGfx;
 }
 
@@ -220,35 +223,35 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-Window::Exception::Exception(int line, const char* file, HRESULT hr) noexcept
-	: MyException(line, file)
+Window::HrException::HrException(int line, const char* file, HRESULT hr) noexcept
+	: Exception(line, file)
 	, hr(hr)
 {
 
 }
 
-const char* Window::Exception::what() const noexcept
+const char* Window::HrException::what() const noexcept
 {
 	std::ostringstream oss;
-	std::wstring wstr = GetErrorString();
-	std::string str(wstr.begin(), wstr.end());
+
 	oss << GetType() << std::endl
-		<< "[Error Code] " << GetErrorCode() << std::endl
-		<< "[Description] " << str << std::endl
+		<< "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
+		<< std::dec << " (" << (unsigned long)GetErrorCode() << ")" << std::endl
+		<< "[Description] " << GetErrorDescription() << std::endl
 		<< GetOriginString();
 	whatBuffer = oss.str();
 	return whatBuffer.c_str();
 }
 
-const char* Window::Exception::GetType() const noexcept
+const char* Window::HrException::GetType() const noexcept
 {
 	return "My Window Exception";
 }
 
-std::wstring Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
+std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
 {
 	wchar_t* pMsgBuf = nullptr;
-	DWORD nMsgLen = FormatMessage(
+	const DWORD nMsgLen = FormatMessage(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER |
 		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 		nullptr, hr, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US),
@@ -256,19 +259,28 @@ std::wstring Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
 	);
 	if (nMsgLen == 0)
 	{
-		return L"Unidentified error code";
+		return "Unidentified error code";
 	}
 	std::wstring errorString = pMsgBuf;
 	LocalFree(pMsgBuf);
-	return errorString;
+	std::string str;
+	char cstr[512] = { 0 };
+	sprintf(cstr, "%S", errorString.c_str());
+	str = cstr;
+	return str;
 }
 
-HRESULT Window::Exception::GetErrorCode() const noexcept
+HRESULT Window::HrException::GetErrorCode() const noexcept
 {
 	return hr;
 }
 
-std::wstring Window::Exception::GetErrorString() const noexcept
+std::string Window::HrException::GetErrorDescription() const noexcept
 {
-	return TranslateErrorCode(hr);
+	return Exception::TranslateErrorCode(hr);
+}
+
+const char* Window::NoGfxException::GetType() const noexcept
+{
+	return "My Window exception [no Graphics]";
 }
